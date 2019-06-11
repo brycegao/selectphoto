@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <RelativeLayout
+    android:id="@+id/lyt_title_bar"
+    android:layout_width="match_parent"
+    android:layout_height="47dp"
+    android:layout_alignParentTop="true"
+    android:background="#FF3072F6">
+    <ImageView
+      android:id="@+id/btn_back"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:paddingLeft="15dp"
+      android:paddingRight="15dp"
+      android:scaleType="center"
+      android:src="@drawable/btn_back_normal" />
+
+    <TextView
+      android:id="@+id/tv_name"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"
+      android:textColor="#fff"
+      android:textSize="16dp"
+      android:layout_centerInParent="true"
+      android:gravity="center"
+      android:text="相机胶卷" />
+
+  </RelativeLayout>
+
+  <!-- 显示图片 -->
+  <android.support.v7.widget.RecyclerView
+    android:id="@+id/recylerview"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    ></android.support.v7.widget.RecyclerView>
+
+  <RelativeLayout
+    android:id="@+id/lyt_bottom_bar"
+    android:layout_width="match_parent"
+    android:layout_height="47dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentStart="true">
+
+    <TextView
+      android:id="@+id/btn_preview"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_alignParentLeft="true"
+      android:gravity="center"
+      android:textColor="#aaaaaa"
+      android:textSize="16dp"
+      android:paddingLeft="15dp"
+      android:paddingRight="15dp"
+      android:text="预览"/>
+
+    <LinearLayout
+      android:id="@+id/ll_send"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_alignParentRight="true"
+      android:gravity="center_vertical"
+      android:orientation="horizontal"
+      android:paddingLeft="15dp"
+      android:paddingRight="15dp">
+
+      <TextView
+        android:id="@+id/tv_send_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:textColor="#000000"
+        android:text="0"
+        android:textSize="16dp"
+        android:gravity="center" />
+
+      <TextView
+        android:id="@+id/btn_send"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="16dp"
+        android:textColor="#000"
+        android:text="发送" />
+    </LinearLayout>
+  </RelativeLayout>
+</LinearLayout>
