@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 显示图片 选择框-->
+<com.brycegao.libchoose.widget.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <ImageView
+    android:id="@+id/iv_pic"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop"
+    android:src="@drawable/icon_gridview_picture_normal" />
+
+  <ImageView
+    android:id="@+id/iv_selectbox"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentTop="true"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="5dp"
+    android:src="@drawable/icon_chat_album_unselected" />
+
+</com.brycegao.libchoose.widget.SquareLayout>

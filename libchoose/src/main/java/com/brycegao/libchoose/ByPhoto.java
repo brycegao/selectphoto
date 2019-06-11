@@ -8,6 +8,9 @@ public class ByPhoto {
 
   private int mFlags;
 
+  //一行显示多少张图片， 最少1个，最多5个
+  private int mLineCount;
+
   //单击选中
   public static final int FLAG_ONE_FINGER_CHOOSE = 0X00000001;
 
@@ -41,6 +44,11 @@ public class ByPhoto {
 
   public ByPhoto setFlags(int flag) {
     this.mFlags = flag;
+    return this;
+  }
+
+  public ByPhoto setLineCount(int count) {
+    this.mLineCount = count;
     return this;
   }
 
