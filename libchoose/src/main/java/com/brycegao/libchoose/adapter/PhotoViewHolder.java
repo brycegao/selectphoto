@@ -9,9 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import com.brycegao.libchoose.R;
+import com.brycegao.libchoose.model.ImageItem;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.RequestOptions;
+import java.io.File;
 
 public class PhotoViewHolder extends RecyclerView.ViewHolder {
   private Context mContex;
@@ -26,6 +28,7 @@ public class PhotoViewHolder extends RecyclerView.ViewHolder {
     super(itemView);
 
     mContex = context;
+    initViews(itemView);
   }
 
   public static PhotoViewHolder getInstance(Context context) {
@@ -42,7 +45,7 @@ public class PhotoViewHolder extends RecyclerView.ViewHolder {
     ivMark  = view.findViewById(R.id.iv_selectbox);
   }
 
-  public void updateData(Uri imageUri, boolean isSel) {
+  public void updateData(ImageItem item, boolean isSel) {
     if (isSel) {
       ivMark.setImageResource(R.drawable.icon_chat_album_selected);
     } else {
@@ -54,7 +57,7 @@ public class PhotoViewHolder extends RecyclerView.ViewHolder {
         .error(R.drawable.icon_gridview_picture_normal);
 
     Glide.with(mContex)
-        .load(imageUri)
+        .load("file:///" + item.imagePath)
         .apply(options)
         .into(ivImage);
   }

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
+import com.brycegao.libchoose.model.ImageItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,16 +13,16 @@ import java.util.List;
 
 public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
   //数据源
-  private List<Uri> mListData;
+  private List<ImageItem> mListData;
 
-  private List<Uri> mSelItems = new ArrayList<>();
+  private List<ImageItem> mSelItems = new ArrayList<>();
 
   private Context mContext;
 
   //recyclerview占用的屏幕宽度
   private int mScreenWidth;
 
-  public PhotoViewAdapter(Context context, List<Uri> items, int width) {
+  public PhotoViewAdapter(Context context, List<ImageItem> items, int width) {
     mContext = context;
     mListData = items;
     mScreenWidth = width;
@@ -32,7 +33,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
    *
    * @return 对应数据
    */
-  public Uri getObject(int position) {
+  public ImageItem getObject(int position) {
     if (mListData == null) {
       return null;
     }
@@ -43,14 +44,14 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   /**
    * 获取适配器器持有的整个数据源集合
    */
-  public List<Uri> getListData() {
+  public List<ImageItem> getListData() {
     return mListData;
   }
 
   /**
    * 强制刷新全部数据
    */
-  public void refreshDataList(List<Uri> items) {
+  public void refreshDataList(List<ImageItem> items) {
     if (items == null) {
       return;
     }
@@ -66,7 +67,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
    * @param item， 记录
    * @return 添加的位置
    */
-  public synchronized void add(int position, Uri item) {
+  public synchronized void add(int position, ImageItem item) {
     if (mListData == null) {
       mListData = new ArrayList<>();
     }
@@ -78,7 +79,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   /**
    * 在末尾添加一条记录并刷新列表
    */
-  public synchronized boolean add(Uri object) {
+  public synchronized boolean add(ImageItem object) {
     int lastIndex = mListData.size();
 
     if (mListData.add(object)) {
@@ -92,7 +93,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   /**
    * 在指定位置添加多个记录
    */
-  public synchronized boolean addAll(int location, Collection<Uri> collection) {
+  public synchronized boolean addAll(int location, Collection<ImageItem> collection) {
     if (mListData.addAll(location, collection)) {
       notifyItemRangeInserted(location, collection.size());
       return true;
@@ -104,7 +105,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   /**
    * 在尾部追加数据
    */
-  public synchronized boolean addAll(Collection<Uri> collection) {
+  public synchronized boolean addAll(Collection<ImageItem> collection) {
     int lastIndex = mListData.size();
     if (mListData.addAll(collection)) {
       notifyItemRangeInserted(lastIndex, collection.size());
@@ -125,7 +126,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   /**
    * 删除一条数据并刷新列表
    */
-  public synchronized boolean remove(Uri model) {
+  public synchronized boolean remove(ImageItem model) {
     int index = mListData.indexOf(model);
     if (mListData.remove(model)) {
       notifyItemRemoved(index);
@@ -141,11 +142,11 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
    * @param collection, 要删除的model
    * @return true删除成功并刷新列表， false没删除
    */
-  public synchronized boolean removeAll(@NonNull Collection<Uri> collection) {
+  public synchronized boolean removeAll(@NonNull Collection<ImageItem> collection) {
     boolean modified = false;
-    Iterator<Uri> iterator = mListData.iterator();
+    Iterator<ImageItem> iterator = mListData.iterator();
     while (iterator.hasNext()) {
-      Uri item = iterator.next();
+      ImageItem item = iterator.next();
       if (collection.contains(item)) {
         int index = mListData.indexOf(item);
         iterator.remove();
@@ -166,7 +167,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   public synchronized boolean retainAll(@NonNull Collection<?> collection) {
     boolean modified = false;
 
-    Iterator<Uri> iterator = mListData.iterator();
+    Iterator<ImageItem> iterator = mListData.iterator();
     while (iterator.hasNext()) {
       Object object = iterator.next();
       if (!collection.contains(object)) {
@@ -187,8 +188,8 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
    * @param object， 新model
    * @return 旧数据
    */
-  public synchronized Uri update(int location, Uri object) {
-    Uri origin = mListData.set(location, object);
+  public synchronized ImageItem update(int location, ImageItem object) {
+    ImageItem origin = mListData.set(location, object);
     notifyItemChanged(location);
 
     return origin;
@@ -197,7 +198,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   /**
    * 使用新数据刷新列表， 增删改
    */
-  public void replaceWith(List<Uri> data) {
+  public void replaceWith(List<ImageItem> data) {
     if (data.isEmpty() && mListData.isEmpty()) {
       return;
     }
@@ -224,7 +225,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     // 然后遍历新列表，对旧列表的数据更新、移动、增加
     for (int indexNew = 0; indexNew < data.size(); indexNew++) {
-      Uri item = data.get(indexNew);
+      ImageItem item = data.get(indexNew);
 
       int indexOld = mListData.indexOf(item);
 
@@ -248,10 +249,10 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
   @Override
   public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-    Uri uri = mListData.get(position);
-    boolean isSel = mSelItems.contains(uri);
+    ImageItem item = mListData.get(position);
+    boolean isSel = mSelItems.contains(item);
 
-    ((PhotoViewHolder)holder).updateData(uri, isSel);
+    ((PhotoViewHolder)holder).updateData(item, isSel);
   }
 
   @Override
