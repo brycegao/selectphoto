@@ -210,6 +210,8 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
         //(x,y)在 （left，top)和(right,bottom)之间
         Log.d("brycegao", "找到匹配的ViewHolder：" + i);
         mAdaper.slideOverItem(i);
+
+        mTvCount.setText(String.valueOf(mAdaper.getSelectNums()));
       }
     }
     Log.d("brycegao", "当前显示范围：" + firstPos + "-" + lastPos);

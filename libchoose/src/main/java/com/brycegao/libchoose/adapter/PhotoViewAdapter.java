@@ -320,5 +320,9 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
       notifyItemChanged(position);
     }
   }
+
+  public int getSelectNums() {
+    return mSelItems.size();
+  }
 }
 
