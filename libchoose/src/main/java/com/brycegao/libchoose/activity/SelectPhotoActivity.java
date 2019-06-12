@@ -7,16 +7,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.brycegao.libchoose.BuildConfig;
-import com.brycegao.libchoose.ByPhoto;
 import com.brycegao.libchoose.Constants;
 import com.brycegao.libchoose.R;
 import com.brycegao.libchoose.adapter.PhotoViewAdapter;
+import com.brycegao.libchoose.adapter.PhotoViewHolder;
 import com.brycegao.libchoose.engine.LoadDataTask;
 import com.brycegao.libchoose.inter.IClickItem;
 import com.brycegao.libchoose.inter.ILoadData;
@@ -38,9 +38,6 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
 
   //选中个数
   private TextView mTvCount;
-
-  //默认每行显示4个图片
-  private final int DEFAULT_LINE_COUNT = 3;
 
   private LoadDataTask mTask;
 
@@ -82,10 +79,9 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
 
     //网格布局，默认是纵向； 横向有4个图片
     mGridmanager = new GridLayoutManager(this,
-        DEFAULT_LINE_COUNT, GridLayoutManager.VERTICAL, false);
+        Constants.DEFAULT_LINE_COUNT, GridLayoutManager.VERTICAL, false);
     mRvPhotos.setLayoutManager(mGridmanager);
-    mAdaper = new PhotoViewAdapter(this, new ArrayList<ImageItem>(),
-        getWindow().getDecorView().getWidth());
+    mAdaper = new PhotoViewAdapter(this, new ArrayList<ImageItem>(), getScreenWidth());
 
     mRvPhotos.setAdapter(mAdaper);
     mRvPhotos.setCallBack(new ITouchEventListener() {
@@ -98,6 +94,12 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
         mAdaper.clickItem(position);
       }
     });
+  }
+
+  private int getScreenWidth() {
+    DisplayMetrics metrics = new DisplayMetrics();
+    getWindowManager().getDefaultDisplay().getMetrics(metrics);
+    return metrics.widthPixels;
   }
 
   private void initData() {
@@ -220,7 +222,10 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
          && holder.itemView.getTop() < y && holder.itemView.getBottom() > y) {
         //(x,y)在 （left，top)和(right,bottom)之间
         Log.d("brycegao", "找到匹配的ViewHolder：" + i);
-        mAdaper.slideOverItem(i);
+        //mAdaper.slideOverItem(i);
+        mAdaper.refreshDataSlideOnly(i);
+        boolean isCheck = mAdaper.isItemChecked(i);
+        ((PhotoViewHolder)holder).updateCheckStatus(isCheck);
 
         mTvCount.setText(String.valueOf(mAdaper.getSelectNums()));
       }

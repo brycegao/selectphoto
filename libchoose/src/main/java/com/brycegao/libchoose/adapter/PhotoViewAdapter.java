@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import com.brycegao.libchoose.Constants;
 import com.brycegao.libchoose.inter.IClickItem;
 import com.brycegao.libchoose.model.ImageItem;
 import java.util.ArrayList;
@@ -253,7 +254,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     //只有一种类型的卡片
-    return PhotoViewHolder.getInstance(mContext);
+    return PhotoViewHolder.getInstance(mContext, parent, mScreenWidth/ Constants.DEFAULT_LINE_COUNT);
   }
 
   @Override
@@ -269,7 +270,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
       }
     });
-    ((PhotoViewHolder)holder).updateData(item, isSel);
+    ((PhotoViewHolder)holder).updateData(item, isSel, position);
   }
 
   @Override
@@ -317,6 +318,34 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     //刷新控件
     notifyItemChanged(position);
+  }
+
+  /**
+   * 仅更新数据， 不刷新控件
+   * @param position
+   */
+  public void refreshDataClickOnly(int position) {
+    if (mListData == null || position >= mListData.size()) {
+      return;
+    }
+
+    //更新数据
+    if (mSelItems.contains(Integer.valueOf(position))) {
+      mSelItems.remove(Integer.valueOf(position));
+    } else {
+      mSelItems.add(Integer.valueOf(position));
+    }
+  }
+
+  public void refreshDataSlideOnly(int position) {
+    if (mListData == null || position >= mListData.size()) {
+      return;
+    }
+
+    //更新数据, set里没有说明未选中； set里有说明已选中
+    if (!mSelItems.contains(Integer.valueOf(position))) {
+      mSelItems.add(Integer.valueOf(position));
+    }
   }
 
   /**
