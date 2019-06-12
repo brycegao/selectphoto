@@ -1,13 +1,13 @@
 package com.brycegao.libchoose.adapter;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import com.brycegao.libchoose.model.ImageItem;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,11 +15,12 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   //数据源
   private List<ImageItem> mListData;
 
-  private List<ImageItem> mSelItems = new ArrayList<>();
+  //选中记录的下标
+  private HashSet<Integer> mSelItems = new HashSet<>();
 
   private Context mContext;
 
-  //recyclerview占用的屏幕宽度
+  //recyclerview占用的屏幕宽度，设置每个图片的宽高。 减少控件测量的时间
   private int mScreenWidth;
 
   public PhotoViewAdapter(Context context, List<ImageItem> items, int width) {
@@ -250,7 +251,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   @Override
   public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     ImageItem item = mListData.get(position);
-    boolean isSel = mSelItems.contains(item);
+    boolean isSel = mSelItems.contains(position);
 
     ((PhotoViewHolder)holder).updateData(item, isSel);
   }
@@ -266,6 +267,58 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
       return 0;
     }
     return mListData.size();
+  }
+
+  /**
+   * 判断图片是否被选中
+   * @param position，下标
+   * @return true已选中， false未选中
+   */
+  public boolean isItemChecked(int position) {
+    if (mListData == null || position >= mListData.size()) {
+      return false;
+    }
+
+    return mSelItems.contains(Integer.valueOf(position));
+  }
+
+  /**
+   * 点击了一张图片， 刷新选中状态。 选中->未选中， 未选中->选中
+   * @param position， 位置
+   * @return
+   */
+  public void clickItem(int position) {
+    if (mListData == null || position >= mListData.size()) {
+      return;
+    }
+
+    //更新数据
+    if (mSelItems.contains(Integer.valueOf(position))) {
+      mSelItems.remove(Integer.valueOf(position));
+    } else {
+      mSelItems.add(Integer.valueOf(position));
+    }
+
+    //刷新控件
+    notifyItemChanged(position);
+  }
+
+  /**
+   * 手指滑动经过一个item， 如果当前item未选中则选中， 如果当前item已选中则返回
+   * @param position
+   */
+  public void slideOverItem(int position) {
+    if (mListData == null || position >= mListData.size()) {
+      return;
+    }
+
+    //更新数据, set里没有说明未选中； set里有说明已选中
+    if (!mSelItems.contains(Integer.valueOf(position))) {
+      mSelItems.add(Integer.valueOf(position));
+
+      //刷新控件
+      notifyItemChanged(position);
+    }
   }
 }
 

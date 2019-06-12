@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.brycegao.libchoose.widget.MyLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@+id/ll_container"
   android:orientation="vertical" android:layout_width="match_parent"
   android:layout_height="match_parent">
 
@@ -31,13 +32,13 @@
   </RelativeLayout>
 
   <!-- 显示图片 -->
-  <android.support.v7.widget.RecyclerView
+  <com.brycegao.libchoose.widget.MyRecyclerView
     android:id="@+id/recylerview"
     android:layout_width="match_parent"
     android:background="#fff"
     android:layout_height="0dp"
     android:layout_weight="1"
-    ></android.support.v7.widget.RecyclerView>
+    ></com.brycegao.libchoose.widget.MyRecyclerView>
 
   <RelativeLayout
     android:id="@+id/lyt_bottom_bar"
@@ -89,4 +90,4 @@
         android:text="发送" />
     </LinearLayout>
   </RelativeLayout>
-</LinearLayout>
+</com.brycegao.libchoose.widget.MyLinearLayout>
