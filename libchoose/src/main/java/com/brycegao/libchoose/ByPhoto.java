@@ -31,19 +31,19 @@ public class ByPhoto {
   //最多选择几张图片
   private int mMaxSelCount;
 
-  //设置选中后的回调
+  //设置选中后的回调, 不能使用弱引用！！！ 在新的Activity调用时拿到的是空
   private static IByPhotoData sCallBack;
 
-  //单击选中
+  //todo 单击选中
   public static final int FLAG_ONE_FINGER_CHOOSE = 0X00000001;
 
-  //单指横向或纵向滑动， 沿着滑动轨迹选中经过的图片
+  //todo 单指横向或纵向滑动， 沿着滑动轨迹选中经过的图片
   public static final int FLAG_ONE_FINGER_SLIDE = 0X00000002;
 
-  //单指斜向滑动， 选中矩形区域内的图片
+  //todo 单指斜向滑动， 选中矩形区域内的图片
   public static final int FLAG_ONE_FINGER_OBLIQUE = 0X00000004;
 
-  //双指滑动，双指间的图片被选中； 且拦截滑动事件，控件不能滚动
+  //todo 双指滑动，双指间的图片被选中； 且拦截滑动事件，控件不能滚动
   public static final int FLAG_DOUBLE_FINGER_SLIDE = 0X00000008;
 
   private static Handler sHandler = new Handler();

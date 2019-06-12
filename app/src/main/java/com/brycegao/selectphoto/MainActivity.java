@@ -38,6 +38,7 @@ public class MainActivity extends Activity {
             .setListener(new IByPhotoData() {
               @Override public void onDataSelected(List<ImageItem> list) {
                 Log.d("brycegao", "回调数据" + list);
+                mAdapter.clearAll();
                 mAdapter.replaceWith(list);
               }
             })
