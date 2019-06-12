@@ -65,12 +65,13 @@ public class SelectPhotoActivity extends Activity implements ILoadData, View.OnC
   private int mMaxCheckedCount;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
+    //在子线程加载数据
+    initData();
+
     super.onCreate(savedInstanceState);
 
     final long beginTime = System.currentTimeMillis();
     Log.d("brycegao", "SelectPhotoActivity onCreate begin");
-    //在子线程加载数据
-    initData();
 
     setContentView(R.layout.activity_selectphoto_main);
     findViewById(R.id.lyt_title_bar).setOnClickListener(new View.OnClickListener() {
