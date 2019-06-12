@@ -19,6 +19,7 @@ import com.brycegao.libchoose.adapter.PhotoViewAdapter;
 import com.brycegao.libchoose.adapter.PhotoViewHolder;
 import com.brycegao.libchoose.engine.LoadDataTask;
 import com.brycegao.libchoose.inter.IClickItem;
+import com.brycegao.libchoose.inter.IDrawCallBack;
 import com.brycegao.libchoose.inter.ILoadData;
 import com.brycegao.libchoose.inter.ITouchEventListener;
 import com.brycegao.libchoose.model.ImageItem;
@@ -58,6 +59,7 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    final long beginTime = System.currentTimeMillis();
     Log.d("brycegao", "SelectPhotoActivity onCreate begin");
     //在子线程加载数据
     initData();
@@ -91,6 +93,12 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
       @Override public void clickItem(int position) {
         mAdaper.clickItem(position);
         mTvCount.setText(mAdaper.getSelectNums() + "");
+      }
+    });
+    mAdaper.setDrawListener(new IDrawCallBack() {
+      @Override public void onDrawComplete(long time) {
+        long diff = time - beginTime;
+        Log.d("brycegao", "渲染第一张图片用时：" + diff + "毫秒");
       }
     });
 

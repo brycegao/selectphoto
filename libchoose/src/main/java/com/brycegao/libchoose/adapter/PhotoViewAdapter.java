@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.brycegao.libchoose.Constants;
 import com.brycegao.libchoose.inter.IClickItem;
+import com.brycegao.libchoose.inter.IDrawCallBack;
 import com.brycegao.libchoose.model.ImageItem;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +29,8 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
   private IClickItem mClickItem;
 
+  private IDrawCallBack mDrawCallback;
+
   public PhotoViewAdapter(Context context, List<ImageItem> items, int width) {
     mContext = context;
     mListData = items;
@@ -36,6 +39,10 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
   public void setClickListener(IClickItem callback) {
     mClickItem = callback;
+  }
+
+  public void setDrawListener(IDrawCallBack callBack) {
+    mDrawCallback = callBack;
   }
 
   /**
@@ -270,7 +277,9 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
       }
     });
-    ((PhotoViewHolder)holder).updateData(item, isSel, position);
+
+    //只判断第一条记录的刷新时间
+    ((PhotoViewHolder)holder).updateData(item, isSel, position, position==0? mDrawCallback:null);
   }
 
   @Override
