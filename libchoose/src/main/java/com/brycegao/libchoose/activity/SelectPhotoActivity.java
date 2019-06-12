@@ -22,7 +22,6 @@ import com.brycegao.libchoose.inter.IClickItem;
 import com.brycegao.libchoose.inter.ILoadData;
 import com.brycegao.libchoose.inter.ITouchEventListener;
 import com.brycegao.libchoose.model.ImageItem;
-import com.brycegao.libchoose.widget.MyLinearLayout;
 import com.brycegao.libchoose.widget.MyRecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,16 +54,15 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
   private final double MIN_DISTANCE = 10.0;
 
   private int mFlags;
-  private MyLinearLayout mContainer;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    Log.d("brycegao", "SelectPhotoActivity onCreate begin");
     //在子线程加载数据
     initData();
 
     setContentView(R.layout.activity_selectphoto_main);
-    mContainer = findViewById(R.id.ll_container);
     findViewById(R.id.lyt_title_bar).setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         finish();
@@ -92,8 +90,11 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
     mAdaper.setClickListener(new IClickItem() {
       @Override public void clickItem(int position) {
         mAdaper.clickItem(position);
+        mTvCount.setText(mAdaper.getSelectNums() + "");
       }
     });
+
+    Log.d("brycegao", "SelectPhotoActivity onCreate end");
   }
 
   private int getScreenWidth() {
@@ -194,6 +195,8 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
     if (items == null || items.length == 0) {
       return;
     }
+
+    Log.d("brycegao", "SelectPhotoActivity segDataLoaded");
 
     mAdaper.addAll(Arrays.asList(items));
   }
