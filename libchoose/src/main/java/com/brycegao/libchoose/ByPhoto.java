@@ -2,35 +2,37 @@ package com.brycegao.libchoose;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.ImageView;
+import com.brycegao.libchoose.activity.SelectPhotoActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 public class ByPhoto {
-  private Context mCtx;
+  private WeakReference<Context> mRefContext;
 
   private int mFlags;
 
   //一行显示多少张图片， 最少1个，最多5个
-  private int mLineCount;
+  private int mLineCount = Constants.DEFAULT_LINE_COUNT;
+
+  //最多选择几张图片
+  private int mMaxSelCount;
+
+  //设置选中后的回调
+  private static IByPhotoData sCallBack;
 
   //单击选中
   public static final int FLAG_ONE_FINGER_CHOOSE = 0X00000001;
@@ -46,9 +48,8 @@ public class ByPhoto {
 
   private static Handler sHandler = new Handler();
 
-
   public ByPhoto(Context context) {
-    mCtx = context;
+    mRefContext = new WeakReference<>(context);
   }
 
   public static ByPhoto with(Context context) {
@@ -130,6 +131,69 @@ public class ByPhoto {
   }
 
   /**
+   * 重置参数
+   */
+  public static void release() {
+    sCallBack = null;
+  }
+
+  /**
+   * 设置每行显示几个图片
+   * @param value, 取值范围[1,5], 默认3个
+   */
+  public ByPhoto setNumPerRow(int value) {
+    if (value < Constants.MIN_LINE_COUNT || value > Constants.MAX_LINE_COUNT) {
+      mLineCount = Constants.DEFAULT_LINE_COUNT;
+    } else {
+      mLineCount = value;
+    }
+    return this;
+  }
+
+  /**
+   * 设置最多选中几条
+   * @param max
+   * @return
+   */
+  public ByPhoto setMaxCheckPhoto(int max) {
+    if (max <= 0) {
+      this.mMaxSelCount = Integer.MAX_VALUE;
+      return this;
+    }
+    this.mMaxSelCount = max;
+    return this;
+  }
+
+  /**
+   * 开始任务
+   */
+  public void begin() {
+    Intent intent = new Intent(mRefContext.get(), SelectPhotoActivity.class);
+    if (mRefContext.get() instanceof Activity) {
+      //do nothing
+    } else {
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    }
+    intent.putExtra(Constants.KEY_PHOTO_COUNT_PER_LINE, mLineCount);
+    intent.putExtra(Constants.KEY_MAX_CHECKED_PHOTO_COUNT, mMaxSelCount);
+    mRefContext.get().startActivity(intent);
+  }
+
+  public static IByPhotoData getByCallBack() {
+    return sCallBack;
+  }
+
+  /**
+   * 设置选中图片的回调
+   * @param listener
+   * @return
+   */
+  public ByPhoto setListener(IByPhotoData listener) {
+    sCallBack = listener;
+    return this;
+  }
+
+  /**
    * 设置支持的选中方式
    * @param flag
    * @return
@@ -141,11 +205,6 @@ public class ByPhoto {
 
   public ByPhoto setFlags(int flag) {
     this.mFlags = flag;
-    return this;
-  }
-
-  public ByPhoto setLineCount(int count) {
-    this.mLineCount = count;
     return this;
   }
 

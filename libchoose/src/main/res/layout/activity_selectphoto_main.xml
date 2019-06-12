@@ -84,6 +84,7 @@
         android:id="@+id/btn_send"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:padding="8dp"
         android:gravity="center"
         android:textSize="16dp"
         android:textColor="#3072f6"

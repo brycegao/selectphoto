@@ -31,10 +31,14 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
   private IDrawCallBack mDrawCallback;
 
-  public PhotoViewAdapter(Context context, List<ImageItem> items, int width) {
+  //每行最多显示几个
+  private int mMaxPerRow;
+
+  public PhotoViewAdapter(Context context, List<ImageItem> items, int width, int maxCountPerRow) {
     mContext = context;
     mListData = items;
     mScreenWidth = width;
+    mMaxPerRow = maxCountPerRow;
   }
 
   public void setClickListener(IClickItem callback) {
@@ -261,7 +265,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     //只有一种类型的卡片
-    return PhotoViewHolder.getInstance(mContext, parent, mScreenWidth/ Constants.DEFAULT_LINE_COUNT);
+    return PhotoViewHolder.getInstance(mContext, parent, mScreenWidth/ mMaxPerRow);
   }
 
   @Override
@@ -344,6 +348,21 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     } else {
       mSelItems.add(Integer.valueOf(position));
     }
+  }
+
+  /**
+   * 获取所有选中记录
+   * @return list
+   */
+  public ArrayList<ImageItem> getAllSelItems() {
+    ArrayList<ImageItem> list = new ArrayList<>();
+    Iterator<Integer> iterator = mSelItems.iterator();
+    while (iterator.hasNext()) {
+      ImageItem imageItem = mListData.get(iterator.next());
+      list.add(imageItem);
+    }
+
+    return list;
   }
 
   public void refreshDataSlideOnly(int position) {

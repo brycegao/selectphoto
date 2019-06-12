@@ -2,6 +2,7 @@ package com.brycegao.libchoose.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.brycegao.libchoose.ByPhoto;
 import com.brycegao.libchoose.Constants;
 import com.brycegao.libchoose.R;
 import com.brycegao.libchoose.adapter.PhotoViewAdapter;
@@ -28,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SelectPhotoActivity extends Activity implements ILoadData {
+public class SelectPhotoActivity extends Activity implements ILoadData, View.OnClickListener {
   private MyRecyclerView mRvPhotos;
   private PhotoViewAdapter mAdaper;
   private GridLayoutManager mGridmanager;
@@ -56,6 +58,12 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
 
   private int mFlags;
 
+  //每行最多显示几张图片
+  private int mMaxLineCount;
+
+  //最多选中几张图片
+  private int mMaxCheckedCount;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
@@ -70,18 +78,26 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
         finish();
       }
     });
+    findViewById(R.id.btn_send).setOnClickListener(this);
+    mTvViewDetail = findViewById(R.id.btn_preview);
+    mTvViewDetail.setOnClickListener(this);
 
     mRvPhotos = findViewById(R.id.recylerview);
     mTvViewDetail = findViewById(R.id.tv_name);
     mTvCount = findViewById(R.id.tv_send_count);
 
     mFlags = getIntent().getIntExtra(Constants.KEY_FLAGS, 0);
+    mMaxCheckedCount = getIntent().getIntExtra(Constants.KEY_MAX_CHECKED_PHOTO_COUNT,
+        Integer.MAX_VALUE);
+    mMaxLineCount = getIntent().getIntExtra(Constants.KEY_PHOTO_COUNT_PER_LINE,
+        Constants.DEFAULT_LINE_COUNT);
 
     //网格布局，默认是纵向； 横向有4个图片
     mGridmanager = new GridLayoutManager(this,
-        Constants.DEFAULT_LINE_COUNT, GridLayoutManager.VERTICAL, false);
+        mMaxLineCount, GridLayoutManager.VERTICAL, false);
     mRvPhotos.setLayoutManager(mGridmanager);
-    mAdaper = new PhotoViewAdapter(this, new ArrayList<ImageItem>(), getScreenWidth());
+    mAdaper = new PhotoViewAdapter(this, new ArrayList<ImageItem>(), getScreenWidth(),
+        mMaxLineCount);
 
     mRvPhotos.setAdapter(mAdaper);
     mRvPhotos.setCallBack(new ITouchEventListener() {
@@ -91,6 +107,11 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
     });
     mAdaper.setClickListener(new IClickItem() {
       @Override public void clickItem(int position) {
+        //如果选中记录总数超过最大值则跳出循环
+        if (mAdaper.getSelectNums() > mMaxCheckedCount
+            && !mAdaper.isItemChecked(position)) {
+          return;
+        }
         mAdaper.clickItem(position);
         mTvCount.setText(mAdaper.getSelectNums() + "");
       }
@@ -111,6 +132,25 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
     return metrics.widthPixels;
   }
 
+  @Override public void onClick(View v) {
+    if (v.getId() == R.id.btn_send) {
+      ArrayList<ImageItem> list = mAdaper.getAllSelItems();
+
+      if (ByPhoto.getByCallBack() != null) {
+        ByPhoto.getByCallBack().onDataSelected(list);
+        ByPhoto.release();  //释放回调，避免内存泄漏
+      }
+
+      Intent intent = new Intent();
+      intent.putParcelableArrayListExtra(Constants.KEY_IMAGE_LIST, list);
+      setResult(RESULT_OK, intent);
+      finish();
+    } else if (v.getId() == R.id.btn_preview) {
+      Toast.makeText(this, "待实现", Toast.LENGTH_LONG).show();
+    }
+  }
+
+  //申请权限并启动子线程加载数据
   private void initData() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       if (checkCallingOrSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -137,7 +177,6 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
     int x = (int) event.getX();
     int y = (int) event.getY();
 
-    Log.d("brycegao", "processTouchEvent action:" + event.getAction());
     //记录点击屏幕时的初始坐标
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
       mDownX = x;
@@ -204,8 +243,6 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
       return;
     }
 
-    Log.d("brycegao", "SelectPhotoActivity segDataLoaded");
-
     mAdaper.addAll(Arrays.asList(items));
   }
 
@@ -229,8 +266,11 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
 
     for (int i = firstPos; i <= lastPos; i++) {
       RecyclerView.ViewHolder holder = mRvPhotos.findViewHolderForAdapterPosition(i);
+
+      //如果选中记录总数超过最大值则跳出循环, 而且焦点在当前item范围内
       if (holder.itemView.getLeft() < x && holder.itemView.getRight() > x
-         && holder.itemView.getTop() < y && holder.itemView.getBottom() > y) {
+         && holder.itemView.getTop() < y && holder.itemView.getBottom() > y
+         && mAdaper.getSelectNums() < mMaxCheckedCount) {
         //(x,y)在 （left，top)和(right,bottom)之间
         Log.d("brycegao", "找到匹配的ViewHolder：" + i);
         //mAdaper.slideOverItem(i);
