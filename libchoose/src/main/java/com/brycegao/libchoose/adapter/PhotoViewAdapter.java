@@ -3,7 +3,9 @@ package com.brycegao.libchoose.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
+import com.brycegao.libchoose.inter.IClickItem;
 import com.brycegao.libchoose.model.ImageItem;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,10 +25,16 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   //recyclerview占用的屏幕宽度，设置每个图片的宽高。 减少控件测量的时间
   private int mScreenWidth;
 
+  private IClickItem mClickItem;
+
   public PhotoViewAdapter(Context context, List<ImageItem> items, int width) {
     mContext = context;
     mListData = items;
     mScreenWidth = width;
+  }
+
+  public void setClickListener(IClickItem callback) {
+    mClickItem = callback;
   }
 
   /**
@@ -249,10 +257,18 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   }
 
   @Override
-  public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+  public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
     ImageItem item = mListData.get(position);
     boolean isSel = mSelItems.contains(position);
 
+    //点击事件回调
+    holder.itemView.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        if (mClickItem != null) {
+          mClickItem.clickItem(position);
+        }
+      }
+    });
     ((PhotoViewHolder)holder).updateData(item, isSel);
   }
 

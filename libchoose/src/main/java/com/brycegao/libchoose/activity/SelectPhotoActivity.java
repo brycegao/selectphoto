@@ -18,6 +18,7 @@ import com.brycegao.libchoose.Constants;
 import com.brycegao.libchoose.R;
 import com.brycegao.libchoose.adapter.PhotoViewAdapter;
 import com.brycegao.libchoose.engine.LoadDataTask;
+import com.brycegao.libchoose.inter.IClickItem;
 import com.brycegao.libchoose.inter.ILoadData;
 import com.brycegao.libchoose.inter.ITouchEventListener;
 import com.brycegao.libchoose.model.ImageItem;
@@ -62,6 +63,9 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    //在子线程加载数据
+    initData();
+
     setContentView(R.layout.activity_selectphoto_main);
     mContainer = findViewById(R.id.ll_container);
     findViewById(R.id.lyt_title_bar).setOnClickListener(new View.OnClickListener() {
@@ -84,7 +88,19 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
         getWindow().getDecorView().getWidth());
 
     mRvPhotos.setAdapter(mAdaper);
+    mRvPhotos.setCallBack(new ITouchEventListener() {
+      @Override public boolean onMotionEvent(MotionEvent event) {
+        return processTouchEvent(event);
+      }
+    });
+    mAdaper.setClickListener(new IClickItem() {
+      @Override public void clickItem(int position) {
+        mAdaper.clickItem(position);
+      }
+    });
+  }
 
+  private void initData() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       if (checkCallingOrSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
           != PackageManager.PERMISSION_GRANTED
@@ -104,18 +120,13 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
       mTask.execute();
     }
 
-    mRvPhotos.setCallBack(new ITouchEventListener() {
-      @Override public boolean onMotionEvent(MotionEvent event) {
-        return processTouchEvent(event);
-      }
-    });
   }
-
 
   private boolean processTouchEvent(MotionEvent event) {
     int x = (int) event.getX();
     int y = (int) event.getY();
 
+    Log.d("brycegao", "processTouchEvent action:" + event.getAction());
     //记录点击屏幕时的初始坐标
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
       mDownX = x;
@@ -131,16 +142,16 @@ public class SelectPhotoActivity extends Activity implements ILoadData {
       mLastY = 0;
     }
 
-    double distance = Math.sqrt(Math.abs(x-mLastX)*Math.abs(x-mLastX)
-        + Math.abs(y-mLastY)*Math.abs(y-mLastY));
-    if (distance > MIN_DISTANCE) {
-      mLastY = y;
-      mLastX = x;
+    if (event.getAction() == MotionEvent.ACTION_MOVE) {
+      double distance = Math.sqrt(Math.abs(x - mLastX) * Math.abs(x - mLastX)
+          + Math.abs(y - mLastY) * Math.abs(y - mLastY));
+      //如果是横向滑动且滑动距离超过阈值，则判断经过的item并勾选
+      if (distance > MIN_DISTANCE && Math.abs(x - mDownX) > Math.abs(y - mDownY)) {
+        mLastY = y;
+        mLastX = x;
 
-      //判断 todo
-      //if (ByPhoto.isOneFingerSlideEnabled(mFlags)) {
         doCheckSingleFinger(x, y);
-      //}
+      }
     }
     return false;
   }
