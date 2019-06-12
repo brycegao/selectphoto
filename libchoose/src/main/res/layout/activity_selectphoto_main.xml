@@ -27,7 +27,7 @@
       android:textSize="16dp"
       android:layout_centerInParent="true"
       android:gravity="center"
-      android:text="相机胶卷" />
+      android:text="图片选择" />
 
   </RelativeLayout>
 
@@ -58,7 +58,7 @@
       android:textSize="16dp"
       android:paddingLeft="15dp"
       android:paddingRight="15dp"
-      android:text="预览"/>
+      android:text="查看大图"/>
 
     <LinearLayout
       android:id="@+id/ll_send"
@@ -88,7 +88,7 @@
         android:gravity="center"
         android:textSize="16dp"
         android:textColor="#3072f6"
-        android:text="发送" />
+        android:text="确定" />
     </LinearLayout>
   </RelativeLayout>
 </com.brycegao.libchoose.widget.MyLinearLayout>
